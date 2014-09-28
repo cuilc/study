@@ -1,0 +1,48 @@
+library(quantmod)
+stock=c("AAPL","MSFT","ORCL","GOOGL")
+getSymbols(Symbols = stock,src = "yahoo")
+
+#1)
+sum(Vo(AAPL)["2013-01-01::2013-10-31"])
+
+#2)
+date<-list()
+for (i in stock){
+  date[[i]]=index(get(i))[abs(Delt(Cl(get(i))))>=0.02]
+}
+
+mutualdate=as.Date(Reduce(intersect,date[1:4]))
+
+
+file1<-pdf("homework.pdf",onefile=T)
+for (i in stock){
+chartSeries(name=i,x=get(i)[mutualdate],TA=NULL,theme = "white")
+}
+
+#集中在2008到2009年上半年，这段时间主要是世界”金融危机“爆发的时间段 
+
+#3)
+delta=list()
+for (i in stock){
+  delta[[i]]=Delt(Ad(get(i)))
+  delta[[i]]=delta[[i]][-1]*100
+  names(delta[[i]])=i
+}
+
+panel.cor <- function(x, y, ...)
+{
+  par(usr = c(0, 1, 0, 1))
+  txt <- as.character(format(cor(x, y), digits=2))
+  text(0.5, 0.5, txt, cex = 6* abs(cor(x, y)))
+}
+
+pairs(delta,upper.panel=panel.cor)
+#oralce和微软的股票相似度最高
+oldpar=par(mfrow = c(2,2))
+for (i in stock){
+    acf(delta[[i]],main=i)
+}
+
+par(oldpar)
+dev.off()
+#no significant self-correlations
