@@ -1,0 +1,31 @@
+a 列出每个部门的名称及其人数 
+  > db.emp.group({
+... "key":{"deptno":true},
+... "initial": {"csum": 0 },
+... "reduce":function(obj, prev)
+... {
+... prev.csum+= obj.sal;
+... }
+... })
+[
+        {
+                "deptno" : "20",
+                "csum" : 6775
+        },
+        {
+                "deptno" : "30",
+                "csum" : 9400
+        },
+        {
+                "deptno" : "10",
+                "csum" : 8750
+        }
+]
+>
+
+列出工资最高的头三名员工姓名及其工资 
+  
+> db.emp.find({},{_id:0,ename:1,sal:1}).sort({sal:-1}).limit(3)
+{ "ename" : "KING", "sal" : 5000 }
+{ "ename" : "FORD", "sal" : 3000 }
+{ "ename" : "JONES", "sal" : 2975 }
