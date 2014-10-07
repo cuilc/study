@@ -1,0 +1,102 @@
+1 在mongodb里设计集合保存Oracle样板表emp和dept里的数据（数据内容见课程资源内的作业素材），并在此集合上完成以下查询 
+a 列出每个部门的名称及其人数 
+b 列出工资最高的头三名员工姓名及其工资 
+c 列出工资比上司高的员工姓名 
+d 列出平均工资高于公司总平均工资的部门名称 
+
+构造数据：
+每一个员工信息一行，只将dept的信息作为内嵌文档：
+
+db.emp.insert({"_id" : 7369,"ename" : "SMITH","job" : "CLERK","mgr" : 7902,"hiredate" : "1980-12-17","sal" : 800,"dept" : {"deptno" : 20,"dname" : "RESEARCH","loc" : "DALLAS"}})
+db.emp.insert({"_id" : 7499,"ename" : "ALLEN","job" : "SALESMAN","mgr" : 7698,"hiredate" : "1981-02-20","sal" : 1600,"comm" : 300,"dept" : {"deptno" : 30,"dname" : "SALES","loc" : "CHICAGO"}})
+db.emp.insert({"_id" : 7521,"ename" : "WARD","job" : "SALESMAN","mgr" : 7698,"hiredate" : "1981-02-22","sal" : 1250,"comm" : 500,"dept" : {"deptno" : 30,"dname" : "SALES","loc" : "CHICAGO"}})
+db.emp.insert({"_id" : 7566,"ename" : "JONES","job" : "MANAGER","mgr" : 7839,"hiredate" : "1981-04-02","sal" : 2975,"dept" : {"deptno" : 20,"dname" : "RESEARCH","loc" : "DALLAS"}})
+db.emp.insert({"_id" : 7654,"ename" : "MARTIN","job" : "SALESMAN","mgr" : 7698,"hiredate" : "1981-09-28","sal" : 1250,"comm" : 1400,"dept" : {"deptno" : 30,"dname" : "SALES","loc" : "CHICAGO"}})
+db.emp.insert({"_id" : 7698,"ename" : "BLAKE","job" : "MANAGER","mgr" : 7839,"hiredate" : "1981-05-01","sal" : 2850,"dept" : {"deptno" : 30,"dname" : "SALES","loc" : "CHICAGO"}})
+db.emp.insert({"_id" : 7782,"ename" : "CLARK","job" : "MANAGER","mgr" : 7839,"hiredate" : "1981-06-09","sal" : 2450,"dept" : {"deptno" : 10,"dname" : "ACCOUNTING","loc" : "NEW YORK"}})
+db.emp.insert({"_id" : 7839,"ename" : "KING","job" : "PRESIDENT","hiredate" : "1981-11-17","sal" : 5000,"dept" : {"deptno" : 10,"dname" : "ACCOUNTING","loc" : "NEW YORK"}})
+db.emp.insert({"_id" : 7844,"ename" : "TURNER","job" : "SALESMAN","mgr" : 7698,"hiredate" : "1981-09-08","sal" : 1500,"comm" : 0,"dept" : {"deptno" : 30,"dname" : "SALES","loc" : "CHICAGO"}})
+db.emp.insert({"_id" : 7900,"ename" : "JAMES","job" : "CLERK","mgr" : 7698,"hiredate" : "1981-12-03","sal" : 950,"dept" : {"deptno" : 30,"dname" : "SALES","loc" : "CHICAGO"}})
+db.emp.insert({"_id" : 7902,"ename" : "FORD","job" : "ANALYST","mgr" : 7566,"hiredate" : "1981-12-03","sal" : 3000,"dept" : {"deptno" : 20,"dname" : "RESEARCH","loc" : "DALLAS"}})
+db.emp.insert({"_id" : 7934,"ename" : "MILLER","job" : "CLERK","mgr" : 7782,"hiredate" : "1982-01-23","sal" : 1300,"dept" : {"deptno" : 10,"dname" : "ACCOUNTING","loc" : "NEW YORK"}})
+
+
+a 列出每个部门的名称及其人数：
+
+> db.emp.group({
+... "key" : {"dept.dname" : true},
+... "initial" : {"empcount" : 0},
+... "reduce" : function(obj,prev){
+... prev.empcount += 1;
+... }
+... })
+[
+        {
+                "dept.dname" : "RESEARCH",
+                "empcount" : 3
+        },
+        {
+                "dept.dname" : "SALES",
+                "empcount" : 6
+        },
+        {
+                "dept.dname" : "ACCOUNTING",
+                "empcount" : 3
+        }
+]
+
+
+b 列出工资最高的头三名员工姓名及其工资
+
+> db.emp.find({},{"ename" : 1,"sal" : 1,"_id" : 0}).limit(3).sort({"sal" : -1})
+{ "ename" : "KING", "sal" : 5000 }
+{ "ename" : "FORD", "sal" : 3000 }
+{ "ename" : "JONES", "sal" : 2975 }
+
+
+c 列出工资比上司高的员工姓名
+
+
+> db.emp.find().forEach(function(u){ 
+... if (u.mgr != undefined && u.sal > db.emp.findOne({"_id" : u.mgr}).sal) {
+... print("empno:" + u._id + " empname:" + u.ename + " empsal:" + u.sal + " mgrno:" + u.mgr + " mgrsal:" + db.emp.findOne({"_id" : u.mgr}).sal);
+... }
+... });
+empno:7902 empname:FORD empsal:3000 mgrno:7566 mgrsal:2975
+>
+
+
+d 列出平均工资高于公司总平均工资的部门名称
+
+
+> db.emp.aggregate([
+... {
+... $group : {
+... _id : "$dept.dname",
+... average : {$avg : "$sal"}
+... }
+... },
+... {
+... $match : {
+... average : {"$gt" : 
+... db.emp.aggregate({
+... $group : {
+... _id : null,
+... totalaverage : {$avg : "$sal"}
+... }
+... }).result[0].totalaverage
+... }
+... }
+... }
+... ]).result
+[
+        {
+                "_id" : "ACCOUNTING",
+                "average" : 2916.6666666666665
+        },
+        {
+                "_id" : "RESEARCH",
+                "average" : 2258.3333333333335
+        }
+]
+>
