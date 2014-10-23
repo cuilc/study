@@ -1,0 +1,37 @@
+启劢配置服务器
+mongod --dbpath /var/lib/mongo/dbs/config --port 20000
+
+启劢mongos
+mongos --port 300000 --configdb localhost:20000
+
+添加片
+cd /var/lib/mongo/dbs
+mkdir shard1
+ls
+
+mongod --dbpath /var/lib/mongo/dbs/shard1 --port 10000 --nojournal
+
+连接mongos
+mongo localhost:30000/admin
+db.runCommand({addshard:"localhost:10000", allowLocal:true})
+
+切分数据
+db.runCommand({"enablesharding":"foo"})
+db.runCommand({"shardcollection":"foo.bar", "key":{"_id":1}})
+
+查看所有的片
+use config
+db.shards.find()
+
+database集合
+db.databases.find()
+
+chunks集合
+db.chunks.find()
+
+获得概要
+db.printShardingStatus()
+
+删除片
+db.runCommand({"removeshard":"localhost:10000"})
+db.runCommand({"removeshard":"localhost:10000"})
