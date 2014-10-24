@@ -1,0 +1,29 @@
+//list all avaiable tasks
+gradle tasks
+
+//list properties of a project
+gradle properties
+
+gradle cE  e 
+==
+gradle cleanEclipse eclipse
+
+//exclude task
+-x 
+//only print task print
+-q
+
+-b build_file
+-p project_home
+
+// list projects
+$ gradle -q projects
+
+//list project dependencies
+$ gradle -q :tops-journey:tops-front-purchaser-journey:dependencies
+$ gradle -q :tops-journey:tops-front-purchaser-journey:dependencies --configuration compile
+
+> gradle -q webapp:dependencyInsight --dependency groovy --configuration compile
+org.codehaus.groovy:groovy-all:2.2.0
+\--- project :api
+     \--- compile
