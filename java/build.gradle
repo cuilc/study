@@ -1,0 +1,32 @@
+group = 'com.clc'
+version = '1.0'
+
+allprojects {
+    buildDir = 'target'
+
+    apply plugin: 'java'
+    apply plugin: 'eclipse-wtp'
+    apply plugin: 'maven'
+
+    sourceCompatibility = '1.7'
+    targetCompatibility = '1.7'
+
+    repositories {
+        maven { url 'https://maven.alfresco.com/nexus/content/groups/public' }
+        mavenCentral()
+        mavenLocal()
+    }
+
+    eclipse {
+        classpath {
+            downloadSources=true
+        }
+    }
+
+   task 'create-dirs' << {
+        sourceSets*.java.srcDirs*.each { it.mkdirs() }
+        sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+    }
+
+  [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}
