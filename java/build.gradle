@@ -1,3 +1,4 @@
+apply from : 'libraries.gradle'
 group = 'com.clc'
 version = '1.0'
 
@@ -12,6 +13,7 @@ allprojects {
     targetCompatibility = '1.7'
 
     repositories {
+        maven { url 'http://192.168.160.187:8081/nexus/content/groups/public' }
         maven { url 'https://maven.alfresco.com/nexus/content/groups/public' }
         mavenCentral()
         mavenLocal()
@@ -28,5 +30,16 @@ allprojects {
         sourceSets*.resources.srcDirs*.each { it.mkdirs() }
     }
 
+   configurations {
+        provided {
+            // todo : need to make sure these are non-exported
+            description = 'Non-exported compile-time dependencies.'
+        }
+        configurations {
+            all*.exclude group: 'commons-logging', module: 'commons-logging'
+            all*.exclude group: 'log4j'
+            all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        }
+   }
   [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 }

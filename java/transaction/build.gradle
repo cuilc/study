@@ -1,0 +1,23 @@
+dependencies {
+    testCompile libraries.junit
+    compile libraries.spring_test
+    compile libraries.aspectj
+    compile libraries.aspectj_rt
+    compile libraries.cglib_nodep
+	compile fileTree(dir: 'lib', include: '*.jar')
+    //compile libraries.servlet_api
+    compile libraries.jcl_over_slf4j
+    compile libraries.logback
+    //compile libraries.spring_webmvc
+    compile libraries.c3p0
+    //compile libraries.commons_dbcp
+    compile libraries.mchange_commons_java
+    compile libraries.postgresql
+    compile libraries.spring_orm
+    compile libraries.spring_context
+    compile libraries.spring_context_support
+    compile libraries.ibatis
+    compile libraries.commons_beanutils
+    compile libraries.groovy
+}
+

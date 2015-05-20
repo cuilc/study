@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+  <sqlMap namespace="tops_clc_tx" >
+    <resultMap id="BaseResultMap" class="com.clc.transaction.sample.dao.po.gen.Tx" >
+      <result column="id" property="id" jdbcType="VARCHAR" />
+      <result column="username" property="username" jdbcType="VARCHAR" />
+      <result column="password" property="password" jdbcType="VARCHAR" />
+      <result column="score" property="score" jdbcType="INTEGER" />
+      <result column="last_logon_time" property="lastLogonTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="tops_clc_tx.Base_Column_List" >
+      id, username, password, score, last_logon_time
+    </sql>
+    <select id="tops_clc_tx.selectByExample" resultMap="BaseResultMap" parameterClass="com.clc.transaction.sample.dao.po.gen.TxExample" >
+      select
+      <isParameterPresent >
+        <isEqual property="distinct" compareValue="true" >
+          distinct
+        </isEqual>
+      </isParameterPresent>
+      <include refid="tops_clc_tx.Base_Column_List" />
+      from tops_clc.tx
+      <isParameterPresent >
+        <include refid="common.Example_Where_Clause" />
+        <isNotNull property="orderByClause" >
+          <![CDATA[ order by $orderByClause$ ]]>
+        </isNotNull>
+      </isParameterPresent>
+      <include refid="common.Postgres_Pagination_Limit" />
+    </select>
+    <select id="tops_clc_tx.selectByPrimaryKey" resultMap="BaseResultMap" parameterClass="com.clc.transaction.sample.dao.po.gen.Tx" >
+      select 
+      <include refid="tops_clc_tx.Base_Column_List" />
+      <![CDATA[
+      from tops_clc.tx
+      where id = #id#
+      ]]>
+    </select>
+    <delete id="tops_clc_tx.deleteByPrimaryKey" parameterClass="com.clc.transaction.sample.dao.po.gen.Tx" >
+      <![CDATA[
+      delete from tops_clc.tx
+      where id = #id#
+      ]]>
+    </delete>
+    <delete id="tops_clc_tx.deleteByExample" parameterClass="com.clc.transaction.sample.dao.po.gen.TxExample" >
+      delete from tops_clc.tx
+      <include refid="common.Example_Where_Clause" />
+    </delete>
+    <insert id="tops_clc_tx.insert" parameterClass="com.clc.transaction.sample.dao.po.gen.Tx" >
+      <![CDATA[
+      insert into tops_clc.tx (id, username, password, score, last_logon_time)
+      values (#id#, #username#, #password#, #score#, #lastLogonTime#)
+      ]]>
+    </insert>
+    <insert id="tops_clc_tx.insertSelective" parameterClass="com.clc.transaction.sample.dao.po.gen.Tx" >
+      insert into tops_clc.tx
+      <dynamic prepend="(" >
+        <isNotNull prepend="," property="id" >
+          id
+        </isNotNull>
+        <isNotNull prepend="," property="username" >
+          username
+        </isNotNull>
+        <isNotNull prepend="," property="password" >
+          password
+        </isNotNull>
+        <isNotNull prepend="," property="score" >
+          score
+        </isNotNull>
+        <isNotNull prepend="," property="lastLogonTime" >
+          last_logon_time
+        </isNotNull>
+        )
+      </dynamic>
+      values
+      <dynamic prepend="(" >
+        <isNotNull prepend="," property="id" >
+          <![CDATA[ #id# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="username" >
+          <![CDATA[ #username# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="password" >
+          <![CDATA[ #password# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="score" >
+          <![CDATA[ #score# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="lastLogonTime" >
+          <![CDATA[ #lastLogonTime# ]]>
+        </isNotNull>
+        )
+      </dynamic>
+    </insert>
+    <select id="tops_clc_tx.countByExample" parameterClass="com.clc.transaction.sample.dao.po.gen.TxExample" resultClass="java.lang.Integer" >
+      select count(*) from tops_clc.tx
+      <include refid="common.Example_Where_Clause" />
+    </select>
+    <update id="tops_clc_tx.updateByExampleSelective" >
+      update tops_clc.tx
+      <dynamic prepend="set" >
+        <isNotNull prepend="," property="record.id" >
+          <![CDATA[ id = #record.id# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="record.username" >
+          <![CDATA[ username = #record.username# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="record.password" >
+          <![CDATA[ password = #record.password# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="record.score" >
+          <![CDATA[ score = #record.score# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="record.lastLogonTime" >
+          <![CDATA[ last_logon_time = #record.lastLogonTime# ]]>
+        </isNotNull>
+      </dynamic>
+      <isParameterPresent >
+        <include refid="common.Example_Where_Clause" />
+      </isParameterPresent>
+    </update>
+    <update id="tops_clc_tx.updateByExample" >
+      <![CDATA[
+      update tops_clc.tx
+      set id = #record.id#,
+        username = #record.username#,
+        password = #record.password#,
+        score = #record.score#,
+        last_logon_time = #record.lastLogonTime#
+      ]]>
+      <isParameterPresent >
+        <include refid="common.Example_Where_Clause" />
+      </isParameterPresent>
+    </update>
+    <update id="tops_clc_tx.updateByPrimaryKeySelective" parameterClass="com.clc.transaction.sample.dao.po.gen.Tx" >
+      update tops_clc.tx
+      <dynamic prepend="set" >
+        <isNotNull prepend="," property="username" >
+          <![CDATA[ username = #username# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="password" >
+          <![CDATA[ password = #password# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="score" >
+          <![CDATA[ score = #score# ]]>
+        </isNotNull>
+        <isNotNull prepend="," property="lastLogonTime" >
+          <![CDATA[ last_logon_time = #lastLogonTime# ]]>
+        </isNotNull>
+      </dynamic>
+      <![CDATA[
+      where id = #id#
+      ]]>
+    </update>
+    <update id="tops_clc_tx.updateByPrimaryKey" parameterClass="com.clc.transaction.sample.dao.po.gen.Tx" >
+      <![CDATA[
+      update tops_clc.tx
+      set username = #username#,
+        password = #password#,
+        score = #score#,
+        last_logon_time = #lastLogonTime#
+      where id = #id#
+      ]]>
+    </update>
+  </sqlMap>
