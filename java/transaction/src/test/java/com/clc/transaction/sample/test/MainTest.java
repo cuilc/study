@@ -1,10 +1,11 @@
 package com.clc.transaction.sample.test;
 
 import java.sql.SQLException;
-import java.util.UUID;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,57 +26,33 @@ public class MainTest extends AbstractJUnit4SpringContextTests {
    @Resource
    private ITxTestDao txTestDao;
    
-   @Test
-   public void testReadCommitTx(){
+   @Before
+   public void testInit(){
       try {
-         //remove all data firstly
-         TxDAO.deleteByExample(new TxExample());
+       //remove all data firstly
+         TxExample example = new TxExample();
+         int total = TxDAO.countByExample(example);
+         logger.info("remove old test data, size: {}", total);
+         TxDAO.deleteByExample(example);
+         total = TxDAO.countByExample(example);
+         logger.info("remove old test data completed, current: {}", total);
+         Tx record = new Tx();
+         record.setId("1");
+         record.setUsername("A");
+         record.setLastLogonTime(new Date());
+         logger.info("===insert=======record begin:{}", record);
+         TxDAO.insert(record);
+         logger.info("===insert=======record end:{}", record);
       } catch (SQLException e2) {
          logger.error("", e2);
          return;
-      }
-      
-      new Thread(new Runnable(){
-         @Override
-         public void run() {
-            try {
-               txTestDao.readCommited();
-            } catch (SQLException e1) {
-               logger.error("", e1);
-            }
-         }
-      }).start();
-      
-      new Thread(new Runnable(){
-         @Override
-         public void run() {
-            try {
-               Tx record = new Tx();
-               record.setId("1");
-               record.setUsername("A");
-               TxDAO.insert(record);
-               logger.info("===insert=======record:{}", record);
-            } catch (Exception e) {
-               logger.error("", e);
-            }
-         }}).start();
-      try {
-         Thread.currentThread().join();
-      } catch (InterruptedException e) {
       }
    }
    
    @Test
-   public void testReadRepeatedTx(){
-      try {
-         //remove all data firstly
-         TxDAO.deleteByExample(new TxExample());
-      } catch (SQLException e2) {
-         logger.error("", e2);
-         return;
-      }
-      
-      new Thread(new Runnable(){
+   public void testTransaction(){
+      //可重复读事务
+      Thread readRepeatedThread = new Thread(new Runnable(){
          @Override
          public void run() {
             try {
@@ -84,23 +61,44 @@ public class MainTest extends AbstractJUnit4SpringContextTests {
                logger.error("", e1);
             }
          }
-      }).start();
+      });
       
-      new Thread(new Runnable(){
+    //读已提交事务
+      Thread readCommitedThread = new Thread(new Runnable(){
+         @Override
+         public void run() {
+            try {
+               txTestDao.readCommited();
+            } catch (SQLException e1) {
+               logger.error("", e1);
+            }
+         }
+      });
+      
+    //更新事务
+      Thread updateThread = new Thread(new Runnable(){
          @Override
          public void run() {
             try {
                Tx record = new Tx();
                record.setId("1");
-               record.setUsername("A");
-               TxDAO.insert(record);
-               logger.info("===insert=======record:{}", record);
+               record.setUsername("F");
+               record.setLastLogonTime(new Date());
+               logger.info("===insert=======record begin:{}", record);
+               TxDAO.updateByPrimaryKey(record);
+               logger.info("===insert=======record end:{}", record);
             } catch (Exception e) {
                logger.error("", e);
             }
-         }}).start();
+         }});
+      
       try {
-         Thread.currentThread().join();
+         readRepeatedThread.start();
+         readCommitedThread.start();
+         updateThread.start();
+         readRepeatedThread.join();
+         readCommitedThread.join();
+         updateThread.join();
       } catch (InterruptedException e) {
       }
    }

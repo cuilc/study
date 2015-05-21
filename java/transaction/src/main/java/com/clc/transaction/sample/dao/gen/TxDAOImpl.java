@@ -17,7 +17,6 @@ import com.clc.transaction.sample.dao.po.gen.TxExample;
 import com.ibatis.sqlmap.client.SqlMapClient;
 
 @Service 
-//@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
 public class TxDAOImpl implements TxDAO {
     protected static final Logger LOGGER = LoggerFactory.getLogger(TxDAOImpl.class);
     
@@ -36,7 +35,6 @@ public class TxDAOImpl implements TxDAO {
         return sqlMapClient;
     }
 
-//    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRES_NEW, rollbackFor = Throwable.class)
     public int countByExample(TxExample example) throws SQLException {
         Integer count = (Integer)  sqlMapClient.queryForObject("tops_clc_tx.countByExample", example);
         return count;
@@ -93,6 +91,7 @@ public class TxDAOImpl implements TxDAO {
         return rows;
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRES_NEW, rollbackFor = Throwable.class)
     public int updateByPrimaryKey(Tx record) throws SQLException {
         int rows = sqlMapClient.update("tops_clc_tx.updateByPrimaryKey", record);
         return rows;
