@@ -16,7 +16,8 @@
 		</property>
 	</bean>
 
-	<bean id="clc-dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+	<!--普通数据源　-->
+	<bean id="tx-dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="${jdbc.driver}" />
         <property name="jdbcUrl" value="${jdbc.url.master}" />
         <property name="user" value="${jdbc.username}" />
@@ -53,12 +54,12 @@
         <property name="testConnectionOnCheckout"  value="false" />        
     </bean>
     
-    <bean id="clc-sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+    <bean id="tx-sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
 		<property name="configLocations">
 			<array>
-				<value>classpath*:ibatis/clc-sqlmap-config.xml</value>
+				<value>classpath*:ibatis/tx-sqlmap-config.xml</value>
 			</array>
 		</property>
-		<property name="dataSource" ref="clc-dataSource" />
+		<property name="dataSource" ref="tx-dataSource" />
 	</bean>
 </beans>

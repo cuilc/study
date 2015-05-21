@@ -17,7 +17,7 @@ import com.clc.transaction.sample.dao.gen.TxDAO;
 import com.clc.transaction.sample.dao.po.gen.Tx;
 import com.clc.transaction.sample.dao.po.gen.TxExample;
 
-@ContextConfiguration(locations = { "classpath*:spring/clc-min-ctx.xml"})
+@ContextConfiguration(locations = { "classpath*:spring/tx-min-ctx.xml"})
 public class MainTest extends AbstractJUnit4SpringContextTests {
    private static final Logger logger = LoggerFactory.getLogger(MainTest.class);
 

@@ -11,7 +11,7 @@
 		http://www.springframework.org/schema/security				http://www.springframework.org/schema/security/spring-security-3.1.xsd
 		http://www.springframework.org/schema/task					http://www.springframework.org/schema/task/spring-task-3.1.xsd ">
 		
-	<import resource="classpath*:spring/clc-component-scan.xml" />
-	<import resource="classpath*:spring/clc-datasource.xml" />
-	<import resource="classpath*:spring/clc-transaction.xml" />
+	<import resource="classpath*:spring/tx-component-scan.xml" />
+	<import resource="classpath*:spring/tx-datasource.xml" />
+	<import resource="classpath*:spring/tx-transaction.xml" />
 </beans>

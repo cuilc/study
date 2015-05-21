@@ -20,7 +20,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 public class TxDAOImpl implements TxDAO {
     protected static final Logger LOGGER = LoggerFactory.getLogger(TxDAOImpl.class);
     
-    @Resource(name = "clc-sqlMapClient")
+    @Resource(name = "tx-sqlMapClient")
     private SqlMapClient sqlMapClient;
 
     public TxDAOImpl() {
